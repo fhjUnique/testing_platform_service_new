@@ -1,0 +1,25 @@
+version: '3'
+services:
+  # 服务名称
+  django_python:
+    # 镜像:版本
+    image: fhjunique/django:latest
+    container_name: testing-platform-service
+    # 映射容器9000端口到本地9000端口
+    ports:
+     - "9002:9000"
+    # 数据卷 映射本地文件到容器
+    volumes:
+    # 映射当前文件到容器的/usr/src/app目录
+     - .:/testing_platform_service
+    # 更换pip源
+     - ./pip.conf:/root/.pip/pip.conf
+    # 宿主时间与容器时间保持一致
+     - /etc/localtime:/etc/localtime
+    # 覆盖容器启动后默认执行的命令。
+    command:
+       - /bin/sh
+       - -c
+       - |
+         pip install -r /testing_platform_service/requirements.txt
+         uwsgi --ini /testing_platform_service/uwsgi.ini
